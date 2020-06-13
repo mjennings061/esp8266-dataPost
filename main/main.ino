@@ -28,6 +28,9 @@ float getHumid(void);       //get relative humidity from the DHT11
 
 /////// GLOBAL VARIABLES ///////
 uint32_t delayMS;
+uint32_t ms,old_ms = 0;
+uint32_t loopTime = 20000;
+//uint32_t loopTime = 1000;
 
 void setup() {
   Serial.begin(115200);
@@ -36,10 +39,14 @@ void setup() {
 }
 
 void loop() {
-  // Delay between measurements.
-  delay(delayMS); //set by the sensor's max sample rate
+  // Perform measurements every loopTime milliseconds unless button is pressed
+  ms = esp_log_timestamp(); //log time since startup (millis)
   boolean buttonState = digitalRead(BUTTONPIN);
-  Serial.print(F("Button value: ")); Serial.println(buttonState);
-  float tem = getTemp();  //get the temperature from the DHT11
-  float hum = getHumid(); //get the relative humidity from the DHT11
+  if(((ms - old_ms) > loopTime) || !buttonState){
+    old_ms = esp_log_timestamp(); //update the "last" timestamp
+    Serial.print(F("\nButton value: ")); Serial.println(buttonState);
+    float tem = getTemp();  //get the temperature from the DHT11
+    float hum = getHumid(); //get the relative humidity from the DHT11
+    while(digitalRead(BUTTONPIN) == 0); //wait until button has been released (debounce)
+  }
 }
