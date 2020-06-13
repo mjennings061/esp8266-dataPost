@@ -1,2 +1,10 @@
 # esp32-dataPost
-Post data via Thingspeak
+Post data collected from an ESP32 to Thingspeak
+
+## Dependencies
+- Adafruit_Sensor.h
+- DHT.h
+- DHT_U.h
+
+## Contact Details
+Michael Jennings - mjennings061@gmail.com
