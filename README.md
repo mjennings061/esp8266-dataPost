@@ -1,4 +1,4 @@
-# esp32-dataPost
+# esp8266-dataPost
 Post data collected from an ESP8266 to Thingspeak
 
 ## Dependencies
