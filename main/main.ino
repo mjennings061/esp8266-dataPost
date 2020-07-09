@@ -7,6 +7,11 @@
  * - Add moisture sensor
  * - Add low power mode
  * - Low power wakeup timer
+ * 
+ * Moisture levels
+ * 0 to 1200 (0-31%) dry soil
+ * 1201 to 2800 (32-73%) humid soil
+ * 2801 to 3800 (74-100%) in water
 */
 
 #include <Adafruit_Sensor.h>
@@ -17,6 +22,7 @@
 #define LEDPIN 2        //inbuilt LED pin
 #define DHTPIN 13       //DHT sensor pin
 #define BUTTONPIN 14    //Button input pin
+#define MPIN 32         //moisture sensor analog pin (GPIO4)
 #define DHTTYPE    DHT11     // Type of sensor is a DHT11
 
 // Sensor wiring and usage:
@@ -25,6 +31,7 @@ DHT_Unified dht(DHTPIN, DHTTYPE); //declare DHT sensor object
 
 /////// FUNCTION DECLARATIONS ///////
 void initDHT(void);         //initialise the DHT11
+float getMoisture(int pin); //get moisture value from capacitive sensor in percent
 float getTemp(void);        //get temperature from the DHT11
 float getHumid(void);       //get relative humidity from the DHT11
 void connectWiFi(void);     //wait for wifi connection
@@ -66,11 +73,24 @@ void loop() {
     old_ms = esp_log_timestamp(); //update the "last" timestamp
     digitalWrite(LEDPIN, 1);
     Serial.print(F("\nButton value: ")); Serial.println(buttonState);
-    float moisture = 69.69;
+    float moisture = getMoisture(MPIN); //get the moisture in percent
     float tem = getTemp();  //get the temperature from the DHT11
     float hum = getHumid(); //get the relative humidity from the DHT11
     httpRequest(moisture, tem, hum);
     digitalWrite(LEDPIN, 0);
     while(digitalRead(BUTTONPIN) == 0); //wait until button has been released (debounce)
   }
+}
+
+//get moisture value from capacitive sensor in percent
+float getMoisture(int pin){ 
+  int sensValue = analogRead(pin);
+  float sensFloat = float(sensValue);
+  float percent = (sensFloat/3800)*100;
+  if(percent > 100.0){
+    percent = 100.0;
+  }
+  Serial.print(F("Sensor Value: ")); Serial.println(sensValue);
+  Serial.print(F("Moisture: ")); Serial.print(percent); Serial.println(F("%"));
+  return percent;
 }
