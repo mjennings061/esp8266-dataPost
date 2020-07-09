@@ -1,5 +1,5 @@
 # esp32-dataPost
-Post data collected from an ESP32 to Thingspeak
+Post data collected from an ESP8266 to Thingspeak
 
 ## Dependencies
 - Adafruit_Sensor.h
