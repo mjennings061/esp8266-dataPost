@@ -58,3 +58,16 @@ float getHumid(void){
     return event.relative_humidity;
   }
 }
+
+//get moisture value from capacitive sensor in percent
+float getMoisture(int pin){ 
+  int sensValue = analogRead(pin);
+  float sensFloat = float(sensValue);
+  float percent = (sensFloat/1023)*100;
+  if(percent > 100.0){
+    percent = 100.0;
+  }
+  Serial.print(F("Moisture Value: ")); Serial.print(sensValue);
+  Serial.print(F("\t (")); Serial.print(percent); Serial.println(F("%)"));
+  return percent;
+}
